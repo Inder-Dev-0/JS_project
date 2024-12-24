@@ -1,0 +1,43 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.canvas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 60vw;
+    flex-direction: column;
+}
+
+.canvas .colors {
+    display: flex;
+}
+
+.canvas .button {
+    width: 50px;
+    height: 50px;
+    border: 2px solid black;
+    margin: 20px 20px 20px 0;
+}
+
+.canvas #grey {
+    background: #484848;
+}
+.canvas #white {
+    background: #fff;
+}
+.canvas #blue {
+    background: #0008ff;
+}
+.canvas #yellow {
+    background: #f6ff00;
+}
