@@ -1,72 +1,59 @@
-const rangeValue = document.querySelector('.slider-container .price-slider')
-const rangeInputValue = document.querySelectorAll('.range-input input')
+const rangeValue = document.querySelector('.slider-container .price-slider');
+const rangeInputValue = document.querySelectorAll('.range-input input');
+const priceInputValue = document.querySelectorAll(".price-input input");
 
-let priceGap = 500
+const priceGap = 500;
 
-const priceInputValue = document.querySelectorAll(".price-input input")
+// Update slider positions and inputs
+function updateSlider(minVal, maxVal) {
+    rangeInputValue[0].value = minVal;
+    rangeInputValue[1].value = maxVal;
+    priceInputValue[0].value = minVal;
+    priceInputValue[1].value = maxVal;
 
-for(let i = 0; i < priceInputValue.length; i++){
-    priceInputValue[i].addEventListener('input', function(e){
-        let minp = parseInt(priceInputValue[0].value)
-        let maxp = parseInt(priceInputValue[1].value)
-        let diff = maxp - minp
-
-        if(minp < 0){
-            alert('Minimum price cannot be less than 0')
-            priceInputValue[0].value = 0
-            minp = 0
-        }
-
-        if(maxp > 10000){
-            alert('Maximum price cannot be greater than 10000')
-            priceInputValue[1].value = 10000
-            maxp = 10000
-        }
-
-        if(minp > maxp - priceGap){
-
-            priceInputValue[0].value = maxp - priceGap
-            minp = maxp - priceGap
-
-            if(minp < 0){
-                priceInputValue[0].value = 0
-                minp = 0
-            }
-        }
-
-        if(diff >= priceGap && maxp <= rangeInputValue[1].max){
-            if(e.target.className === 'min-input'){
-                rangeInputValue[0].value = minp
-                let value1 = rangeInputValue[0].max
-                rangeValue.style.left = `${(minp / value1) * 100}%`
-            } else {
-                rangeInputValue[1].value = minp
-                let value2 = rangeInputValue[1].max
-                rangeValue.style.right = `${100 - (maxp / value2) * 100}%`
-            }
-        }
-    })
+    const maxRange = parseInt(rangeInputValue[0].max);
+    rangeValue.style.left = `${(minVal / maxRange) * 100}%`;
+    rangeValue.style.right = `${100 - (maxVal / maxRange) * 100}%`;
 }
 
-for (let i = 0; i < rangeInputValue.length; i++){
-    rangeInputValue[i].addEventListener('input', e => {
-        let minVal = parseInt(rangeInputValue[0].value)
-        let maxVal = parseInt(rangeInputValue[1].value)
-
-        let diff = maxVal - minVal
-
-        if(diff < priceGap){
-            if(e.target.className === "min-range"){
-                rangeInputValue[0].value = maxVal - priceGap
-            }
-            else {
-                rangeInputValue[1].value = minVal + priceGap
-            }
+// Validate input values
+function validateInputs(minVal, maxVal) {
+    if (minVal < 0) minVal = 0;
+    if (maxVal > 10000) maxVal = 10000;
+    if (maxVal - minVal < priceGap) {
+        if (minVal === parseInt(priceInputValue[0].value)) {
+            minVal = maxVal - priceGap;
         } else {
-            priceInputValue[0].value = minVal
-            priceInputValue[1].value = maxVal
-            rangeValue.style.left = `${(minVal / rangeInputValue[0].max) * 100}%`
-            rangeValue.style.left = `${100 - (maxVal / rangeInputValue[1].max) * 100}%`
+            maxVal = minVal + priceGap;
         }
-    })
+    }
+    return [minVal, maxVal];
 }
+
+// Handle price input changes
+priceInputValue.forEach((input, index) => {
+    input.addEventListener('input', () => {
+        let minVal = parseInt(priceInputValue[0].value);
+        let maxVal = parseInt(priceInputValue[1].value);
+
+        [minVal, maxVal] = validateInputs(minVal, maxVal);
+        updateSlider(minVal, maxVal);
+    });
+});
+
+// Handle range input changes
+rangeInputValue.forEach((input) => {
+    input.addEventListener('input', () => {
+        let minVal = parseInt(rangeInputValue[0].value);
+        let maxVal = parseInt(rangeInputValue[1].value);
+
+        if (maxVal - minVal < priceGap) {
+            if (input.className.includes("min-range")) {
+                minVal = maxVal - priceGap;
+            } else {
+                maxVal = minVal + priceGap;
+            }
+        }
+        updateSlider(minVal, maxVal);
+    });
+});
